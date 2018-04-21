@@ -93,9 +93,6 @@ OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 DeviceAddress Thermometer1;  // адрес датчика холодильника
 
-unsigned long deltamills(unsigned long t_old, unsigned long t_new);
-String uptime( unsigned long currentmillis);
-
 // =======================================================================================================================================
 void setup() {
 
@@ -267,10 +264,6 @@ void loop() {
 
     // Проверяем работоспособность датчика температуры холодильника
     if (( f_tempC1 > -20.0 ) && ( f_tempC1 < 50.0 )) { // Температурный датчик исправен
-
-      digitalWrite(RED, LOW);        // гасим индикатор ошибки холодильника если она есть
-      digitalWrite(GREEN, HIGH);
-      digitalWrite(BLUE, LOW);
 
       if ( b_compressor1Off ) {                 // Если компрессор выключен
         ul_deltaTime1 = deltamills(ul_offTime1, ul_newTime); // Разница времени простоя
