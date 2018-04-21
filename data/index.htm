@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="bootstrap.min.css">
+
+    <title>Холодильник</title>
+  </head>
+  <body>
+  <div class="container">
+  <div class="row">
+    <div class="jumbotron">
+    <div class="col-sm">
+<h3>Текущие данные:</h3>
+Температура:
+<span id="temp"></span></br>
+Компрессор:
+<span id="compressor"></span>
+(<span id="worktime"></span>)
+</br>
+Время работы:
+<span id="uptime"></span> 
+
+<h6>Последнее обновление
+	<span id="ut"></span> секунд назад.
+	<span id="status"></span>
+</h6>
+
+<a href="wifi.htm">Настройка WiFi</a></br></br>
+
+<form id="yform" onsubmit="return transmit(this)">
+	<input class="btn btn-primary" type="reset" name='reboot' value="Reboot" onsubmit="return transmit(this)">
+</form>
+
+</div>
+</div>
+</div>
+</div>
+
+<script>
+	function g(i) { return document.getElementById(i) };
+	var xhttp, updateTime;
+
+	function transmit(f) {
+		if (!xhttp) { //prevent simultaneous requests
+			g("status").innerHTML = "updating...";
+			xhttp = new XMLHttpRequest();
+			xhttp.open("POST", "/api");
+			xhttp.send(f ? (new FormData(f)) : "");
+			xhttp.onreadystatechange = function () {
+				if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
+					var data = JSON.parse(xhttp.responseText);
+					g("temp").innerHTML = data.temp;
+					g("compressor").innerHTML = data.compressor;
+					g("uptime").innerHTML = data.uptime;
+					g("worktime").innerHTML = data.worktime;
+					xhttp = null;
+					g("status").innerHTML = "";
+					updateTime = 0;
+				}
+			}
+		}
+		return false; //prevent form redirect
+	}
+	transmit();
+	setInterval(function () { g("ut").innerHTML = ++updateTime; }, 1000);
+	setInterval(transmit, 5000); //autoupdate display every 5s
+</script>
+</body>
+</html>
